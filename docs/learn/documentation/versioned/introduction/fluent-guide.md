@@ -21,31 +21,33 @@ title: Fluent API Guide
 
 This page shows you how to run a Samza stream application with fluent API under different environments.
 
-### Architecture Overview
+### Fluent API Guide
 
-Above diagram shows an overview of Apache Samza architecture. There are four layers in the architecture:
+![diagram-medium](/img/{{site.version}}/learn/documentation/introduction/fluent-arch.png)
+
+Above diagram shows an overview of Apache Samza architecture with Fluent API. There are four layers in the architecture:
 
 #### I. Fluent API
 
-Samza fluent API provides a unified way to handle both streaming and batch data. It provides operators like map, filter, window and join to allow the user to describe the whole end-to-end data processing in a single program. It can consume data from various sources and publish to different sinks. The details of Samza fluent API is covered in (link).
+Samza fluent API provides a unified way to handle both streaming and batch data. It provides operators like map, filter, window and join to allow the user to describe the whole end-to-end data processing in a single program. It can consume data from various sources and publish to different sinks.
 
 #### II. ApplicationRunner
 
-During run time, Samza uses ApplicationRunner to execute a stream application. The runner will generate the necessary configs such as input/output streams, create intermediate streams for partitionBy(), and run the Samza processor in two environments:
+During run time, Samza uses [ApplicationRunner]((javadocs/org/apache/samza/runtime/ApplicationRunner.html)) to execute a stream application. The ApplicationRunner generates the configs such as input/output streams, creates intermediate streams, and starts the execution. There are two types of ApplicationRunner:
 
-* RemoteApplicationRunner - submit the application to a remote cluster which runs it in remote JVMs. This runner is invoked via run-app.sh script. 
+* RemoteApplicationRunner - submit the application to a remote cluster which runs it in remote JVMs. This runner is invoked via _run-app.sh_ script. 
 * LocalApplicationRunner - runs the application in the local JVM processes. This runner is directly invoked by the users in their application’s main() method.
 
-To use RemoteApplicationRunner, config the following property with your StreamApplication class:
+To use RemoteApplicationRunner, config the following property with your [StreamApplication](javadocs/org/apache/samza/application/StreamApplication) class:
 
 {% highlight jproperties %}
 # The StreamApplication class to run
 app.class=Your.StreamApplication.Class
 {% endhighlight %}
 
-Then you can use run-app.sh to run the application in remote cluster as described in this tutorial (link).
+Then you can use _run-app.sh_ to run the application in remote cluster as described in tutorial [here](@Jake:link?).
 
-To use LocalApplicationRunner, you can run your StreamApplication with the runner in your program. The following shows an example of how to run it in main():
+To use LocalApplicationRunner, you can run it with the StreamApplication in your program. The following shows an example of how to run it in main():
 
 {% highlight java %}
 public static void main(String[] args) throws Exception {
@@ -65,11 +67,11 @@ public static void main(String[] args) throws Exception {
 
 #### III. Deployment
 
-Samza supports two types of deployment models: remote deployment and local deployment. In remote deployment, a cluster will run Samza application in distributed containers and manage their life cycle. Right now Samza only support Yarn cluster deployment.
+Samza supports two types of deployment models: remote deployment and local deployment. In the remote deployment, a cluster will run Samza application in distributed containers and manage their life cycle. Right now Samza only support Yarn cluster deployment.
 
-In local deployment, the users can use Samza as a library and run stream processing in their program with any kind of the clusters, like Amazaon EC2 or Mesos. For this deployment, Samza can be configured to use two kinds of coordinator among the cluster:
+In the local deployment, the users can use Samza as a library and run stream processing in their program with any kind of the clusters, like Amazaon EC2 or Mesos. For this deployment, Samza can be configured to use two kinds of coordinator among the cluster:
 
-* Zookeeper - Samza uses Zookeeper to manage group membership and partition assignment. This allows the users to scale in run time by adding more JVMs.
+* Zookeeper - Samza uses Zookeeper to manage group membership and partition assignment. This allows the users to scale in run time by adding more processors.
 * Standalone - Samza can run the application in a single JVM locally without coordination, or multiple JVMs using the user-configured task-to-container and partition-to-task groupers. This supports static user-defined partition assignment.   
 
 To use Zookeeper-based coordination, the following configs are required:
@@ -85,7 +87,7 @@ To use standalone coordination, the following configs are needed:
 job.coordinator.factory=org.apache.samza.standalone.StandaloneJobCoordinatorFactory
 {% endhighlight %}
 
-For more details of local deployment using Zookeeper, please take a look at this tutorial (link).
+For more details of local deployment using Zookeeper, please take a look at this [tutorial](@Jake:link?).
 
 #### IV. Processor
 
